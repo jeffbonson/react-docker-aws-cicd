@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Bookstore - React - 1.2
+          Bookstore - React - 1.3
         </p>
         
       </header>
