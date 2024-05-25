@@ -1,0 +1,28 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "VisualEditor0",
+			"Effect": "Allow",
+			"Action": [
+				"ec2:*",
+				"s3:PutObject",
+				"s3:GetObject",
+				"s3:DeleteObject",
+				"s3:ListBucket",
+				"elasticbeanstalk:CreateApplicationVersion",
+				"elasticbeanstalk:UpdateApplicationVersion",
+				"elasticbeanstalk:DescribeApplicationVersions",
+				"elasticbeanstalk:CreateEnvironment",
+				"elasticbeanstalk:UpdateEnvironment",
+				"elasticbeanstalk:DescribeEnvironments",
+				"elasticbeanstalk:*",
+				"s3:*",
+				"cloudformation:*",
+				"autoscaling-plans:*",
+				"autoscaling:*"
+			],
+			"Resource": "*"
+		}
+	]
+}
