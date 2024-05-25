@@ -40,3 +40,81 @@ Just an app to test react - docker - aws -cicd.
 - docker run -d -p 3000:3000 jeffbonson85/react-docker-aws-cicd:latest
 - open web browser and access http://52.54.129.218:3000
 - yay!
+# Using docker to deploy to Elastic Beanstalk
+- Modify the docker file
+  - expose port from 3000 to 80
+  - introduce builder, nginx, copy from builder
+  - change the CMD options
+  - see [commit history](https://github.com/jeffbonson/react-docker-aws-cicd/commit/d71fd0c1cbd2dc8dd61c08fa4130b32bdf01a7c1) to compare initial file.
+- Create a docker-compose.yml
+- run docker-compose up --build
+- run http://localhost
+- Create EC2 instance profile role
+  - Select IAM / Roles / Create Role
+  - Name: react-docker-aws-cicd-role 
+  - Select Permission Policies: AdministratorAccess-AWSElasticBeanstalk, AmazonS3ReadOnlyAccess 
+- Go to AWS Elastic BeanStalk
+  - create Application
+  - tire - web server environment
+  - Application Name: react-aws-docker-cicd (Note that the name has changed a bit!)
+  - Environment Name: React-aws-docker-cicd-env (auto filled)
+  - Platform: select Docker
+  - Application Code: select Sample Application
+  - Presets: select Single Instance
+  - Service Role: create a new service role
+  - Select EC2 instance profile - react-docker-aws-cicd-role
+  - Select VPC, activate public ip,
+  - Select security groups
+  - Select Health: enhanced, Managed updates: deselect
+  - Create - wait for some time.
+  - After completion, visit the environment - React-aws-docker-cicd-env
+  - Right side, you can find a link named - Go to environment link, visit it and you can see a sample website
+  - http://react-aws-docker-cicd-env.eba-wk5d3rdq.us-east-1.elasticbeanstalk.com/
+- Create IAM user
+  - Go to EC2/ IAM / (Left pane) Users / Create User
+  - Username: react-docker-aws-cicd-user
+  - Check - Provide user access tp the AWS Management Console
+  - Radio select - I want to create an IAM user
+  - Custom Password - eg Awsuser001$
+  - Uncheck - User must create a new password at next signin | Next >
+  - Select - Attach policies directly (since this is a demo and no groups are added)
+  - Permission Policies - AWSCodeCommitPowerUser, CodeBuildAdminAccess
+  - Next > Create User > Copy the number from console sign-in url
+  - To Verify - Open a new incognito window and go to aws console and log back in
+    - Select IAM user and paste the number and hit Next.
+    - Enter IAM username: react-docker-aws-cicd-user
+    - Password: eg Awsuser001$
+    - Login
+    - Check the region of the root user and if IAM user region is different change from header.
+  - Go back to root user / IAM / react-docker-aws-cicd-user
+    - Create permission policy
+      - Go to IAM / DAshboard / Policies / Create policy
+      - Name: policy 001
+      - Services: AutoScaling, Cloud Control API, CloudFormation, EC2, EC2 AutoScaling, ElasticBeanStalk, S3
+      - Create
+      - Verify the json data with the of the file .github/workflows/iam-user-policy.json
+    - Update User Permission policy
+      - Go back to IAM / Users / react-docker-aws-cicd-user / Permission Policies
+      - Add Permission
+      - Select policy 001 and save
+    - Access Keys
+      - select others
+      - enter description / save
+      - copy or download - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
+  - Go to the https://github.com/jeffbonson/react-docker-aws-cicd/settings/secrets/actions
+    - Create new Repository secret
+    - Paste the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
+
+- Deploy the react app using CICD
+  - create a file in .github/workflows/deploy-aws.yml
+  - change the application name and environment name, region if needed
+  - The AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY will also be pulled from the repository secret actions
+  - push the file changes to github
+  - Go to https://github.com/jeffbonson/react-docker-aws-cicd/actions
+  - you can see a new action with the commit message as title
+  - reload the environment - http://react-aws-docker-cicd-env.eba-wk5d3rdq.us-east-1.elasticbeanstalk.com/
+  - yay!
+
+
+
+
