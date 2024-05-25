@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          React - Docker - AWS - Elastic Beanstalk - Version 1.19
+          React - Docker - AWS - Elastic Beanstalk - Version 1.20
         </p>
         <div>angane athum sambhavichu...</div>
       </header>
